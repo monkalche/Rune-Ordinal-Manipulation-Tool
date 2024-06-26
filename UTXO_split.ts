@@ -16,12 +16,12 @@ Bitcoin.initEccLib(ecc);
 
 const networkType: string = networkConfig.networkType;
 const seed: string = process.env.MNEMONIC as string;
-// const privateKey: string = process.env.PRIVATE_KEY as string;
+const privateKey: string = process.env.PRIVATE_KEY as string;
 
 
 const splitUTXO = async () => {
   const wallet = new SeedWallet({ networkType: networkType, seed: seed });
-  // const wallet = new WIFWallet({ networkType: networkType, privateKey: privateKey });
+  const wallet = new WIFWallet({ networkType: networkType, privateKey: privateKey });
 
   const utxos = await getUtxos(wallet.address, networkType);
   const utxo = utxos.find((utxo) => utxo.value > SPLIT_UTXO_LIMIT);
