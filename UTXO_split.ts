@@ -32,7 +32,7 @@ const splitUTXO = async () => {
   let redeemFee = redeemPsbt.extractTransaction().virtualSize() * TESTNET_FEERATE;
 
   let psbt = splitUTXOPsbt(wallet, utxo, networkType, SPLIT_COUNT, redeemFee);
-  let signedPsbt = wallet.signPsbt(psbt, wallet.ecPair)
+let signedPsbt = wallet.signPsbt(psbt, wallet.ecPair)
   
   const txHex = signedPsbt.extractTransaction().toHex();
 
