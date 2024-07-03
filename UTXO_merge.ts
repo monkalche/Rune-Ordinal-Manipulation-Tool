@@ -6,10 +6,8 @@ import { SeedWallet } from "utils/SeedWallet";
 import dotenv from "dotenv";
 import { redeemMergeUTXOPsbt, mergeUTXOPsbt } from "controller/utxo.merge.controller";
 
-const TESTNET_FEERATE = 20;
 const MERGE_COUNT = 5;
 
-dotenv.config();
 Bitcoin.initEccLib(ecc);
 
 const networkType: string = networkConfig.networkType;
