@@ -34,7 +34,7 @@ const wallet = new SeedWallet({ networkType: networkType, seed: seed });
 // const networkType: string = networkConfig.networkType;
 // const wallet = new WIFWallet({ networkType: networkType, privateKey: privateKey });
 
-const txhash: string = 'da40a9da1d0b95609cfcefecdc47cb20a92b5f4e4c672ded5488463182762405'
+const txhash: string = '9cf3f0ded6dfce15739c15350ebdb96b8c42e31a26f934fee3827d06facf9001'
 const txidBuffer = Buffer.from(txhash, 'hex');
 console.log("txidBuffer==>", txidBuffer);
 
@@ -117,11 +117,11 @@ async function delegateInscribe() {
 
   console.log("pasbt addInput==>", psbt);
 
-  const change = utxos[0].value - 546 - transaction_fee;
+  const change = utxos[0].value - 868 - transaction_fee;
 
   psbt.addOutput({
     address: receiveAddress, //Destination Address
-    value: 546,
+    value: 868,
   });
   console.log("ordinal psbt==>", psbt);
 
