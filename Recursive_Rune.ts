@@ -70,7 +70,7 @@ const contentBufferData: Buffer = contentBuffer(`<!DOCTYPE html>
       <img style="width:100%;margin:0px" src="/content/864a32c90a83835e6706c0e649f2bc9ba43281f5144efa4c86e4247264806ab3i0" />
     </div>
   </body>
-</html>
+// </html>
 `);
 
 const revealtxIDBuffer = Buffer.from(parentInscriptionTXID, 'hex');
