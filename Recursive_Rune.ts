@@ -72,6 +72,8 @@ const contentBufferData: Buffer = contentBuffer(`<!DOCTYPE html>
   </body>
 // </html>
 `);
+console.log("contenBufferDatat====>",contentBufferData);
+console.log("Buffer size==>",contentBufferData.length);
 
 const revealtxIDBuffer = Buffer.from(parentInscriptionTXID, 'hex');
 
@@ -104,19 +106,17 @@ let pointerBuffer = pointers.map(pointer => {
 }
 );
 
+const metadataBuffer = cbor.encode(metadata);
 
-
-// const metadataBuffer = cbor.encode(metadata);
-
-// const splitBuffer = (buffer: Buffer, chunkSize: number) => {
-//   let chunks = [];
-//   for (let i = 0; i < buffer.length; i += chunkSize) {
-//     const chunk = buffer.subarray(i, i + chunkSize);
-//     chunks.push(chunk);
-//   }
-//   return chunks;
-// };
-// const contentBufferArray: Array<Buffer> = splitBuffer(contentBufferData, 450)
+const splitBuffer = (buffer: Buffer, chunkSize: number) => {
+  let chunks = [];
+  for (let i = 0; i < buffer.length; i += chunkSize) {
+    const chunk = buffer.subarray(i, i + chunkSize);
+    chunks.push(chunk);
+  }
+  return chunks;
+};
+const contentBufferArray: Array<Buffer> = splitBuffer(contentBufferData, 450)
 
 // export function createChildInscriptionTapScript(): Array<Buffer> {
 
