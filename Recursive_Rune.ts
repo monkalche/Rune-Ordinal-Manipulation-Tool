@@ -50,12 +50,20 @@ const wallet = new SeedWallet({ networkType: networkType, seed: seed });
 // input data
 const txhash: string = 'ea4303aaa2c7939931a2ba129c9fc915d1905d441f2a74b6cd694c71665c7682';
 const memeType: string = 'text/html;charset=utf-8';
-const metaProtocol: Buffer = Buffer.concat([Buffer.from("harmonitech.team", "utf8")]);
+console.log("memtype===>", memeType.length);
+
+const metaProtocol: Buffer = Buffer.concat([Buffer.from("chubby.cheek", "utf8")]);
+console.log("metaprotocol===>",metaProtocol.length);
+
 const receiveAddress: string = 'tb1pu2h9gdhdc3ypsmz5nh4twhw29q2lh23mytmw430fsy3ngphzfjgqv6mg2r';
+console.log("==>",receiveAddress);
+
 const metadata = {
-  'type': 'HarmoniTech',
-  'description': 'HarmoniTech team Recursive Rune'
+  'type': 'Chubby',
+  'description': 'chubby Recursive Rune'
 }
+console.log("metadata==>",metadata);
+
 const fee = 5000;
 const parentInscriptionTXID: string = 'ea4303aaa2c7939931a2ba129c9fc915d1905d441f2a74b6cd694c71665c7682';
 const contentBufferData: Buffer = contentBuffer(`<!DOCTYPE html>
@@ -107,13 +115,19 @@ let pointerBuffer = pointers.map(pointer => {
 );
 
 const metadataBuffer = cbor.encode(metadata);
+console.log("metadataBuffer==>",metadataBuffer);
+
 
 const splitBuffer = (buffer: Buffer, chunkSize: number) => {
   let chunks = [];
   for (let i = 0; i < buffer.length; i += chunkSize) {
     const chunk = buffer.subarray(i, i + chunkSize);
     chunks.push(chunk);
+    console.log("chunk===>",chunk);
+    
   }
+  console.log("chunks====>",chunks);
+  
   return chunks;
 };
 const contentBufferArray: Array<Buffer> = splitBuffer(contentBufferData, 450)
