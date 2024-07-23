@@ -132,42 +132,42 @@ const splitBuffer = (buffer: Buffer, chunkSize: number) => {
 };
 const contentBufferArray: Array<Buffer> = splitBuffer(contentBufferData, 450)
 
-// export function createChildInscriptionTapScript(): Array<Buffer> {
+export function createChildInscriptionTapScript(): Array<Buffer> {
 
-//   const keyPair = wallet.ecPair;
-//   let childOrdinalStacks: any = [
-//     toXOnly(keyPair.publicKey),
-//     opcodes.OP_CHECKSIG,
-//   ];
-//   for (let i = 0; i < 4; i++) {
-//     childOrdinalStacks.push(
-//       opcodes.OP_FALSE,
-//       opcodes.OP_IF,
-//       Buffer.from("ord", "utf8"),
-//       1,
-//       1,
-//       Buffer.concat([Buffer.from(memeType, "utf8")]),
-//       1,
-//       2,
-//       pointerBuffer[i],
-//       1,
-//       3,
-//       inscriptionBuffer,
-//       1,
-//       5,
-//       metadataBuffer,
-//       1,
-//       7,
-//       metaProtocol,
-//       opcodes.OP_0
-//     );
-//     contentBufferArray.forEach((item: Buffer) => {
-//       childOrdinalStacks.push(item)
-//     })
-//     childOrdinalStacks.push(opcodes.OP_ENDIF)
-//   }
-//   return childOrdinalStacks;
-// }
+  const keyPair = wallet.ecPair;
+  let childOrdinalStacks: any = [
+    toXOnly(keyPair.publicKey),
+    opcodes.OP_CHECKSIG,
+  ];
+  for (let i = 0; i < 4; i++) {
+    childOrdinalStacks.push(
+      opcodes.OP_FALSE,
+      opcodes.OP_IF,
+      Buffer.from("ord", "utf8"),
+      1,
+      1,
+      Buffer.concat([Buffer.from(memeType, "utf8")]),
+      1,
+      2,
+      pointerBuffer[i],
+      1,
+      3,
+      inscriptionBuffer,
+      1,
+      5,
+      metadataBuffer,
+      1,
+      7,
+      metaProtocol,
+      opcodes.OP_0
+    );
+    contentBufferArray.forEach((item: Buffer) => {
+      childOrdinalStacks.push(item)
+    })
+    childOrdinalStacks.push(opcodes.OP_ENDIF)
+  }
+  return childOrdinalStacks;
+}
 
 // async function childInscribe() {
 //   const keyPair = wallet.ecPair;
@@ -365,9 +365,9 @@ const contentBufferArray: Array<Buffer> = splitBuffer(contentBufferData, 450)
 //   );
 // }
 
-// function toXOnly(pubkey: Buffer): Buffer {
-//   return pubkey.subarray(1, 33);
-// }
+function toXOnly(pubkey: Buffer): Buffer {
+  return pubkey.subarray(1, 33);
+}
 
 // function tweakSigner(signer: any, opts: any = {}) {
 //   let privateKey = signer.privateKey;
