@@ -263,129 +263,129 @@ async function childInscribe() {
     value: 0,
   });
 
-//   const change = utxos[0].value - 546 * 5 - fee;
+  const change = utxos[0].value - 546 * 5 - fee;
 
-//   psbt.addOutput({
-//     address: receiveAddress, //Destination Address
-//     value: 546,
-//   });
+  psbt.addOutput({
+    address: receiveAddress, //Destination Address
+    value: 546,
+  });
 
-//   psbt.addOutput({
-//     address: receiveAddress, //Destination Address
-//     value: 546,
-//   });
+  psbt.addOutput({
+    address: receiveAddress, //Destination Address
+    value: 546,
+  });
 
-//   psbt.addOutput({
-//     address: receiveAddress, //Destination Address
-//     value: 546,
-//   });
+  psbt.addOutput({
+    address: receiveAddress, //Destination Address
+    value: 546,
+  });
 
-//   psbt.addOutput({
-//     address: receiveAddress, //Destination Address
-//     value: 546,
-//   });
+  psbt.addOutput({
+    address: receiveAddress, //Destination Address
+    value: 546,
+  });
 
-//   psbt.addOutput({
-//     address: receiveAddress, //Destination Address
-//     value: 546,
-//   });
+  psbt.addOutput({
+    address: receiveAddress, //Destination Address
+    value: 546,
+  });
 
-//   psbt.addOutput({
-//     address: receiveAddress, // Change address
-//     value: change,
-//   });
+  psbt.addOutput({
+    address: receiveAddress, // Change address
+    value: change,
+  });
 
-//   await signAndSend(keyPair, psbt);
-// }
+  await signAndSend(keyPair, psbt);
+}
 
-// childInscribe()
+childInscribe()
 
-// export async function signAndSend(
-//   keypair: BTCSigner,
-//   psbt: Psbt,
-// ) {
-//   const signer = tweakSigner(keypair, { network })
-//   psbt.signInput(0, signer);
-//   psbt.signInput(1, keypair);
-//   psbt.finalizeAllInputs()
-//   const tx = psbt.extractTransaction();
+export async function signAndSend(
+  keypair: BTCSigner,
+  psbt: Psbt,
+) {
+  const signer = tweakSigner(keypair, { network })
+  psbt.signInput(0, signer);
+  psbt.signInput(1, keypair);
+  psbt.finalizeAllInputs()
+  const tx = psbt.extractTransaction();
 
-//   console.log(tx.virtualSize())
-//   console.log(tx.toHex());
+  console.log(tx.virtualSize())
+  console.log(tx.toHex());
 
-//   // const txid = await broadcast(tx.toHex());
-//   // console.log(`Success! Txid is ${txid}`);
-// }
+  // const txid = await broadcast(tx.toHex());
+  // console.log(`Success! Txid is ${txid}`);
+}
 
-// export async function waitUntilUTXO(address: string) {
-//   return new Promise<IUTXO[]>((resolve, reject) => {
-//     let intervalId: any;
-//     const checkForUtxo = async () => {
-//       try {
-//         const response: AxiosResponse<string> = await blockstream.get(
-//           `/address/${address}/utxo`
-//         );
-//         const data: IUTXO[] = response.data
-//           ? JSON.parse(response.data)
-//           : undefined;
-//         console.log(data);
-//         if (data.length > 0) {
-//           resolve(data);
-//           clearInterval(intervalId);
-//         }
-//       } catch (error) {
-//         reject(error);
-//         clearInterval(intervalId);
-//       }
-//     };
-//     intervalId = setInterval(checkForUtxo, 4000);
-//   });
-// }
+export async function waitUntilUTXO(address: string) {
+  return new Promise<IUTXO[]>((resolve, reject) => {
+    let intervalId: any;
+    const checkForUtxo = async () => {
+      try {
+        const response: AxiosResponse<string> = await blockstream.get(
+          `/address/${address}/utxo`
+        );
+        const data: IUTXO[] = response.data
+          ? JSON.parse(response.data)
+          : undefined;
+        console.log(data);
+        if (data.length > 0) {
+          resolve(data);
+          clearInterval(intervalId);
+        }
+      } catch (error) {
+        reject(error);
+        clearInterval(intervalId);
+      }
+    };
+    intervalId = setInterval(checkForUtxo, 4000);
+  });
+}
 
-// export async function getTx(id: string): Promise<string> {
-//   const response: AxiosResponse<string> = await blockstream.get(
-//     `/tx/${id}/hex`
-//   );
-//   return response.data;
-// }
+export async function getTx(id: string): Promise<string> {
+  const response: AxiosResponse<string> = await blockstream.get(
+    `/tx/${id}/hex`
+  );
+  return response.data;
+}
 
-// const blockstream = new axios.Axios({
-//   baseURL: `https://mempool.space/testnet/api`,
-//   // baseURL: `https://mempool.space/api`,
-// });
+const blockstream = new axios.Axios({
+  baseURL: `https://mempool.space/testnet/api`,
+  // baseURL: `https://mempool.space/api`,
+});
 
-// export async function broadcast(txHex: string) {
-//   const response: AxiosResponse<string> = await blockstream.post("/tx", txHex);
-//   return response.data;
-// }
+export async function broadcast(txHex: string) {
+  const response: AxiosResponse<string> = await blockstream.post("/tx", txHex);
+  return response.data;
+}
 
-// function tapTweakHash(pubKey: Buffer, h: Buffer | undefined): Buffer {
-//   return crypto.taggedHash(
-//     "TapTweak",
-//     Buffer.concat(h ? [pubKey, h] : [pubKey])
-//   );
-// }
+function tapTweakHash(pubKey: Buffer, h: Buffer | undefined): Buffer {
+  return crypto.taggedHash(
+    "TapTweak",
+    Buffer.concat(h ? [pubKey, h] : [pubKey])
+  );
+}
 
-// function toXOnly(pubkey: Buffer): Buffer {
-//   return pubkey.subarray(1, 33);
-// }
+function toXOnly(pubkey: Buffer): Buffer {
+  return pubkey.subarray(1, 33);
+}
 
-// function tweakSigner(signer: any, opts: any = {}) {
-//   let privateKey = signer.privateKey;
-//   if (!privateKey) {
-//     throw new Error('Private key is required for tweaking signer!');
-//   }
-//   if (signer.publicKey[0] === 3) {
-//     privateKey = ecc.privateNegate(privateKey);
-//   }
-//   const tweakedPrivateKey = ecc.privateAdd(privateKey, tapTweakHash(toXOnly(signer.publicKey), opts.tweakHash));
-//   if (!tweakedPrivateKey) {
-//     throw new Error('Invalid tweaked private key!');
-//   }
-//   return ECPair.fromPrivateKey(Buffer.from(tweakedPrivateKey), {
-//     network: opts.network,
-//   });
-// }
+function tweakSigner(signer: any, opts: any = {}) {
+  let privateKey = signer.privateKey;
+  if (!privateKey) {
+    throw new Error('Private key is required for tweaking signer!');
+  }
+  if (signer.publicKey[0] === 3) {
+    privateKey = ecc.privateNegate(privateKey);
+  }
+  const tweakedPrivateKey = ecc.privateAdd(privateKey, tapTweakHash(toXOnly(signer.publicKey), opts.tweakHash));
+  if (!tweakedPrivateKey) {
+    throw new Error('Invalid tweaked private key!');
+  }
+  return ECPair.fromPrivateKey(Buffer.from(tweakedPrivateKey), {
+    network: opts.network,
+  });
+}
 
 interface IUTXO {
   txid: string;
