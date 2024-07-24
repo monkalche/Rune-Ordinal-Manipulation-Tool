@@ -193,41 +193,42 @@ async function childInscribe() {
     redeem,
   });
 
-//   const address = ordinal_p2tr.address ?? "";
-//   console.log("send coin to address", address);
+  const address = ordinal_p2tr.address ?? "";
+  console.log("send coin to address", address);
 
-//   const utxos = await waitUntilUTXO(address as string);
+  const utxos = await waitUntilUTXO(address as string);
 
-//   const psbt = new Psbt({ network });
+  const psbt = new Psbt({ network });
 
-//   const parentInscriptionUTXO = {
-//     txid: txhash,
-//     vout: 1,
-//     value: 546
-//   }
-//   psbt.addInput({
-//     hash: parentInscriptionUTXO.txid,
-//     index: parentInscriptionUTXO.vout,
-//     witnessUtxo: {
-//       value: parentInscriptionUTXO.value,
-//       script: wallet.output,
-//     },
-//     tapInternalKey: toXOnly(keyPair.publicKey),
-//   });
+  
+  const parentInscriptionUTXO = {
+    txid: txhash,
+    vout: 1,
+    value: 546
+  }
+  psbt.addInput({
+    hash: parentInscriptionUTXO.txid,
+    index: parentInscriptionUTXO.vout,
+    witnessUtxo: {
+      value: parentInscriptionUTXO.value,
+      script: wallet.output,
+    },
+    tapInternalKey: toXOnly(keyPair.publicKey),
+  });
 
-//   psbt.addInput({
-//     hash: utxos[0].txid,
-//     index: utxos[0].vout,
-//     tapInternalKey: toXOnly(keyPair.publicKey),
-//     witnessUtxo: { value: utxos[0].value, script: ordinal_p2tr.output! },
-//     tapLeafScript: [
-//       {
-//         leafVersion: redeem.redeemVersion,
-//         script: redeem.output,
-//         controlBlock: ordinal_p2tr.witness![ordinal_p2tr.witness!.length - 1],
-//       },
-//     ],
-//   });
+  psbt.addInput({
+    hash: utxos[0].txid,
+    index: utxos[0].vout,
+    tapInternalKey: toXOnly(keyPair.publicKey),
+    witnessUtxo: { value: utxos[0].value, script: ordinal_p2tr.output! },
+    tapLeafScript: [
+      {
+        leafVersion: redeem.redeemVersion,
+        script: redeem.output,
+        controlBlock: ordinal_p2tr.witness![ordinal_p2tr.witness!.length - 1],
+      },
+    ],
+  });
 
 //   const edicts: any = [];
 //     edicts.push({
