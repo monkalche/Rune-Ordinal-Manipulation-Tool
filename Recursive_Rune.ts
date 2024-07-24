@@ -230,38 +230,38 @@ async function childInscribe() {
     ],
   });
 
-//   const edicts: any = [];
-//     edicts.push({
-//       id: new RuneId(2817883, 2295),
-//       amount: 10000,
-//       output: 2,
-//     });
-//     edicts.push({
-//       id: new RuneId(2817883, 2295),
-//       amount: 10000,
-//       output: 3,
-//     });
-//     edicts.push({
-//       id: new RuneId(2817883, 2295),
-//       amount: 10000,
-//       output: 4,
-//     });
-//     edicts.push({
-//       id: new RuneId(2817883, 2295),
-//       amount: 10000,
-//       output: 5,
-//     });
-//   const mintstone = new Runestone(
-//     edicts,
-//     none(),
-//     none(),
-//     none()
-//   );
+  const edicts: any = [];
+    edicts.push({
+      id: new RuneId(2817883, 2295),
+      amount: 10000,
+      output: 2,
+    });
+    edicts.push({
+      id: new RuneId(2817883, 2295),
+      amount: 10000,
+      output: 3,
+    });
+    edicts.push({
+      id: new RuneId(2817883, 2295),
+      amount: 10000,
+      output: 4,
+    });
+    edicts.push({
+      id: new RuneId(2817883, 2295),
+      amount: 10000,
+      output: 5,
+    });
+  const mintstone = new Runestone(
+    edicts,
+    none(),
+    none(),
+    none()
+  );
 
-//   psbt.addOutput({
-//     script: mintstone.encipher(),
-//     value: 0,
-//   });
+  psbt.addOutput({
+    script: mintstone.encipher(),
+    value: 0,
+  });
 
 //   const change = utxos[0].value - 546 * 5 - fee;
 
