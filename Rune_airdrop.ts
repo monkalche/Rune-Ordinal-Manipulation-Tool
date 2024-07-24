@@ -56,11 +56,11 @@ export const SameRuneTransferTx = (
   });
   const mintstone = new Runestone(edicts, none(), none(), none());
 
-  // Add output runestone
-  psbt.addOutput({
-    script: mintstone.encipher(),
-    value: 0,
-  });
+//   // Add output runestone
+//   psbt.addOutput({
+//     script: mintstone.encipher(),
+//     value: 0,
+//   });
 
   // Add output for rune airdrop
   for (let i = 0; i < addressList.length; i++) {
@@ -72,7 +72,7 @@ export const SameRuneTransferTx = (
 
   // Sign psbt using admin wallet
   const signedPsbt: Bitcoin.Psbt = wallet.signPsbt(psbt, wallet.ecPair);
-
+///
   // return Virtual Size of Runestone Transaction
   return signedPsbt.extractTransaction(true).toHex();
 };
