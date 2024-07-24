@@ -47,32 +47,32 @@ export const SameRuneTransferTx = (
     tapInternalKey: Buffer.from(wallet.publicKey, "hex").subarray(1, 33),
   });
 
-//   // Create Runestone
-//   const edicts: any = [];
-//   edicts.push({
-//     id: new RuneId(+rune_id.split(":")[0], +rune_id.split(":")[1]),
-//     amount: 0,
-//     output: addressList.length + 1,
-//   });
-//   const mintstone = new Runestone(edicts, none(), none(), none());
+  // Create Runestone
+  const edicts: any = [];
+  edicts.push({
+    id: new RuneId(+rune_id.split(":")[0], +rune_id.split(":")[1]),
+    amount: 0,
+    output: addressList.length + 1,
+  });
+  const mintstone = new Runestone(edicts, none(), none(), none());
 
-//   // Add output runestone
-//   psbt.addOutput({
-//     script: mintstone.encipher(),
-//     value: 0,
-//   });
+  // Add output runestone
+  psbt.addOutput({
+    script: mintstone.encipher(),
+    value: 0,
+  });
 
-//   // Add output for rune airdrop
-//   for (let i = 0; i < addressList.length; i++) {
-//     psbt.addOutput({
-//       address: addressList[i],
-//       value: STANDARD_RUNE_UTXO_VALUE,
-//     });
-//   }
+  // Add output for rune airdrop
+  for (let i = 0; i < addressList.length; i++) {
+    psbt.addOutput({
+      address: addressList[i],
+      value: STANDARD_RUNE_UTXO_VALUE,
+    });
+  }
 
-//   // Sign psbt using admin wallet
-//   const signedPsbt: Bitcoin.Psbt = wallet.signPsbt(psbt, wallet.ecPair);
+  // Sign psbt using admin wallet
+  const signedPsbt: Bitcoin.Psbt = wallet.signPsbt(psbt, wallet.ecPair);
 
-//   // return Virtual Size of Runestone Transaction
-//   return signedPsbt.extractTransaction(true).toHex();
-// };
+  // return Virtual Size of Runestone Transaction
+  return signedPsbt.extractTransaction(true).toHex();
+};
