@@ -132,102 +132,103 @@ const splitBuffer = (buffer: Buffer, chunkSize: number) => {
 };
 const contentBufferArray: Array<Buffer> = splitBuffer(contentBufferData, 450)
 
-// export function createChildInscriptionTapScript(): Array<Buffer> {
+export function createChildInscriptionTapScript(): Array<Buffer> {
 
-//   const keyPair = wallet.ecPair;
-//   let childOrdinalStacks: any = [
-//     toXOnly(keyPair.publicKey),
-//     opcodes.OP_CHECKSIG,
-//   ];
-//   for (let i = 0; i < 4; i++) {
-//     childOrdinalStacks.push(
-//       opcodes.OP_FALSE,
-//       opcodes.OP_IF,
-//       Buffer.from("ord", "utf8"),
-//       1,
-//       1,
-//       Buffer.concat([Buffer.from(memeType, "utf8")]),
-//       1,
-//       2,
-//       pointerBuffer[i],
-//       1,
-//       3,
-//       inscriptionBuffer,
-//       1,
-//       5,
-//       metadataBuffer,
-//       1,
-//       7,
-//       metaProtocol,
-//       opcodes.OP_0
-//     );
-//     contentBufferArray.forEach((item: Buffer) => {
-//       childOrdinalStacks.push(item)
-//     })
-//     childOrdinalStacks.push(opcodes.OP_ENDIF)
-//   }
-//   return childOrdinalStacks;
-// }
+  const keyPair = wallet.ecPair;
+  let childOrdinalStacks: any = [
+    toXOnly(keyPair.publicKey),
+    opcodes.OP_CHECKSIG,
+  ];
+  for (let i = 0; i < 4; i++) {
+    childOrdinalStacks.push(
+      opcodes.OP_FALSE,
+      opcodes.OP_IF,
+      Buffer.from("ord", "utf8"),
+      1,
+      1,
+      Buffer.concat([Buffer.from(memeType, "utf8")]),
+      1,
+      2,
+      pointerBuffer[i],
+      1,
+      3,
+      inscriptionBuffer,
+      1,
+      5,
+      metadataBuffer,
+      1,
+      7,
+      metaProtocol,
+      opcodes.OP_0
+    );
+    contentBufferArray.forEach((item: Buffer) => {
+      childOrdinalStacks.push(item)
+    })
+    childOrdinalStacks.push(opcodes.OP_ENDIF)
+  }
+  return childOrdinalStacks;
+}
 
-// async function childInscribe() {
-//   const keyPair = wallet.ecPair;
-//   const childOrdinalStack = createChildInscriptionTapScript();
+async function childInscribe() {
+  const keyPair = wallet.ecPair;
+  const childOrdinalStack = createChildInscriptionTapScript();
 
-//   console.log(childOrdinalStack)
+  console.log(childOrdinalStack)
 
-//   const ordinal_script = script.compile(childOrdinalStack);
+  const ordinal_script = script.compile(childOrdinalStack);
 
-//   const scriptTree: Taptree = {
-//     output: ordinal_script,
-//   };
+  const scriptTree: Taptree = {
+    output: ordinal_script,
+  };
 
-//   const redeem = {
-//     output: ordinal_script,
-//     redeemVersion: 192,
-//   };
+  const redeem = {
+    output: ordinal_script,
+    redeemVersion: 192,
+  };
 
-//   const ordinal_p2tr = payments.p2tr({
-//     internalPubkey: toXOnly(keyPair.publicKey),
-//     network,
-//     scriptTree,
-//     redeem,
-//   });
+  const ordinal_p2tr = payments.p2tr({
+    internalPubkey: toXOnly(keyPair.publicKey),
+    network,
+    scriptTree,
+    redeem,
+  });
 
-//   const address = ordinal_p2tr.address ?? "";
-//   console.log("send coin to address", address);
+  const address = ordinal_p2tr.address ?? "";
+  console.log("send coin to address", address);
 
-//   const utxos = await waitUntilUTXO(address as string);
+  const utxos = await waitUntilUTXO(address as string);
 
-//   const psbt = new Psbt({ network });
+  const psbt = new Psbt({ network });
 
-//   const parentInscriptionUTXO = {
-//     txid: txhash,
-//     vout: 1,
-//     value: 546
-//   }
-//   psbt.addInput({
-//     hash: parentInscriptionUTXO.txid,
-//     index: parentInscriptionUTXO.vout,
-//     witnessUtxo: {
-//       value: parentInscriptionUTXO.value,
-//       script: wallet.output,
-//     },
-//     tapInternalKey: toXOnly(keyPair.publicKey),
-//   });
+  
+  const parentInscriptionUTXO = {
+    txid: txhash,
+    vout: 1,
+    value: 546
+  }
+  psbt.addInput({
+    hash: parentInscriptionUTXO.txid,
+    index: parentInscriptionUTXO.vout,
+    witnessUtxo: {
+      value: parentInscriptionUTXO.value,
+      script: wallet.output,
+    },
+    tapInternalKey: toXOnly(keyPair.publicKey),
+  });
 
-//   psbt.addInput({
-//     hash: utxos[0].txid,
-//     index: utxos[0].vout,
-//     tapInternalKey: toXOnly(keyPair.publicKey),
-//     witnessUtxo: { value: utxos[0].value, script: ordinal_p2tr.output! },
-//     tapLeafScript: [
-//       {
-//         leafVersion: redeem.redeemVersion,
-//         script: redeem.output,
-//         controlBlock: ordinal_p2tr.witness![ordinal_p2tr.witness!.length - 1],
-//       },
-//     ],
-//   });
+  psbt.addInput({
+    hash: utxos[0].txid,
+    index: utxos[0].vout,
+    tapInternalKey: toXOnly(keyPair.publicKey),
+    witnessUtxo: { value: utxos[0].value, script: ordinal_p2tr.output! },
+    tapLeafScript: [
+      {
+        leafVersion: redeem.redeemVersion,
+        script: redeem.output,
+        controlBlock: ordinal_p2tr.witness![ordinal_p2tr.witness!.length - 1],
+      },
+    ],
+  });
 
 //   const edicts: any = [];
 //     edicts.push({
