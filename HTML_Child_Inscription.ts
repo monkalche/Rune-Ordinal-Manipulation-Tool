@@ -29,13 +29,13 @@ const ECPair: ECPairAPI = ECPairFactory(ecc);
 export const contentBuffer = (content: string) => {
   return Buffer.from(content, 'utf8')
 }
-// const seed: string = process.env.MNEMONIC as string;
-// const networkType: string = networkConfig.networkType;
-// const wallet = new SeedWallet({ networkType: networkType, seed: seed });
-
-const privateKey: string = process.env.PRIVATE_KEY as string;
+const seed: string = process.env.MNEMONIC as string;
 const networkType: string = networkConfig.networkType;
-const wallet = new WIFWallet({ networkType: networkType, privateKey: privateKey });
+const wallet = new SeedWallet({ networkType: networkType, seed: seed });
+
+// const privateKey: string = process.env.PRIVATE_KEY as string;
+// const networkType: string = networkConfig.networkType;
+// const wallet = new WIFWallet({ networkType: networkType, privateKey: privateKey });
 
 // input data
 const txhash: string = '66505a1520d9b9a1b309ecef17a68adb5de166e0a7108a2be6d9b46d85fd951f';
