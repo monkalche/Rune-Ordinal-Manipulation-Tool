@@ -157,7 +157,6 @@ export function createparentInscriptionTapScript(): Array<Buffer> {
       parentOrdinalStacks.push(item)
     })
     parentOrdinalStacks.push(opcodes.OP_ENDIF)
-  // console.log("parentOrdinalStacks==>",parentOrdinalStacks);
   
   return parentOrdinalStacks;
 }
