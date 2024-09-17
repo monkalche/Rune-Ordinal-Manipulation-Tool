@@ -17,14 +17,15 @@ import ecc from "@bitcoinerlab/secp256k1";
 import axios, { AxiosResponse } from "axios";
 import networkConfig from "config/network.config";
 import { WIFWallet } from 'utils/WIFWallet'
-import { SeedWallet } from "utils/SeedWallet";
+// import { SeedWallet } from "utils/SeedWallet";
 import cbor from 'cbor'
+import { log } from "console";
 //test
 const network = networks.testnet;
 // const network = networks.bitcoin;
 
 initEccLib(ecc as any);
-const ECPair: ECPairAPI = ECPairFactory(ecc);
+// const ECPair: ECPairAPI = ECPairFactory(ecc);
 
 // const seed: string = process.env.MNEMONIC as string;
 // const networkType: string = networkConfig.networkType;
@@ -34,34 +35,130 @@ const privateKey: string = process.env.PRIVATE_KEY as string;
 const networkType: string = networkConfig.networkType;
 const wallet = new WIFWallet({ networkType: networkType, privateKey: privateKey });
 
-const receiveAddress: string = "tb1ppx220ln489s5wqu8mqgezm7twwpj0avcvle3vclpdkpqvdg3mwqsvydajn";
+const receiveAddress: string = "tb1pu2h9gdhdc3ypsmz5nh4twhw29q2lh23mytmw430fsy3ngphzfjgqv6mg2r";
 const metadata = {
   'type': 'Bitmap',
   'description': 'Bitmap Community Parent Ordinal'
 }
 const metadataBuffer = cbor.encode(metadata);
-const transaction_fee = 35000;
+const transaction_fee = 50000;
 
+const pointers = [546, 1092, 1638, 2184, 2730];
+
+let pointerBuffer = pointers.map(pointer => {
+  return Buffer.from(pointer.toString(16).padStart(4, '0'), 'hex').reverse();
+});
+
+// Now pointerBuffer is an array of buffers
+// console.log("pointerBuffer==>",pointerBuffer);
+
+
+
+const splitBuffer = (buffer: Buffer, chunkSize: number) => {
+  let chunks = [];
+  for (let i = 0; i < buffer.length; i += chunkSize) {
+    const chunk = buffer.subarray(i, i + chunkSize);
+    chunks.push(chunk);
+  }
+  return chunks;
+};
+
+export const contentBuffer = (content: string) => {
+  return Buffer.from(content, 'utf8')
+}
+const contentBufferData: Buffer = contentBuffer(`<!DOCTYPE html>
+  <html>
+  <body style="margin: 0; padding: 0">
+      <canvas id="canvas" style="width: 100%; height: auto;" width="500" height="500"></canvas>
+      <script>
+          function draw(canvas, rectangleColor, circleColor, text) {
+              const ctx = canvas.getContext('2d');
+  
+              const rectWidth = 400;
+              const rectHeight = 200;
+              const circleRadius = 50;
+              const rectX = (canvas.width - rectWidth) / 2; 
+              const rectY = (canvas.height - rectHeight) / 2; 
+              const circleX = canvas.width / 2; 
+              const circleY = canvas.height / 2; 
+  
+              
+              ctx.fillStyle = rectangleColor;
+              ctx.fillRect(rectX, rectY, rectWidth, rectHeight);
+  
+              
+              ctx.fillStyle = circleColor;
+              ctx.beginPath();
+              ctx.arc(circleX, circleY, circleRadius, 0, Math.PI * 2); 
+              ctx.fill();
+  
+              
+              ctx.fillStyle = '#ffffff'; 
+              ctx.font = '20px Arial';
+              ctx.textAlign = 'center'; 
+              ctx.textBaseline = 'middle'; 
+              ctx.fillText(text, circleX, circleY); 
+          }
+  
+          function getRandomColor() {
+              const rgb = [];
+              for (let i = 0; i < 3; i++) {
+                  rgb.push(Math.floor(Math.random() * 256)); 
+              return \`rgb(\${rgb.join(',')})\`; 
+          }
+  
+          const contents = [
+              'cap',
+              'body',
+              'accessories',
+          ];
+  
+         
+          const rectangleColor = getRandomColor();
+          const circleColor = getRandomColor();
+  
+         
+          const randomText = contents[Math.floor(Math.random() * contents.length)];
+  
+          
+          draw(document.getElementById('canvas'), rectangleColor, circleColor, randomText);
+      </script>
+  </body>
+  </html>
+  `);
+const contentBufferArray: Array<Buffer> = splitBuffer(contentBufferData, 400)
 
 export function createparentInscriptionTapScript(): Array<Buffer> {
 
   const keyPair = wallet.ecPair;
-  const parentOrdinalStacks: any = [
+  let parentOrdinalStacks: any = [
     toXOnly(keyPair.publicKey),
     opcodes.OP_CHECKSIG,
+  ];
+    parentOrdinalStacks.push(
     opcodes.OP_FALSE,
     opcodes.OP_IF,
     Buffer.from("ord", "utf8"),
     1,
     1,
-    Buffer.concat([Buffer.from("text/plain;charset=utf-8", "utf8")]),
+    Buffer.concat([Buffer.from("text/html;charset=utf-8", "utf8")]),
+    1,
+    2,
+    pointerBuffer,
     1,
     5,
     metadataBuffer,
+    1,
+    7,
+    Buffer.concat([Buffer.from("chubby.cheek", "utf8")]),
     opcodes.OP_0,
-    Buffer.concat([Buffer.from("364972.bitmap", "utf8")]),
-    opcodes.OP_ENDIF,
-  ];
+    );
+    contentBufferArray.forEach((item: Buffer) => {
+      parentOrdinalStacks.push(item)
+    })
+    parentOrdinalStacks.push(opcodes.OP_ENDIF)
+  // console.log("parentOrdinalStacks==>",parentOrdinalStacks);
+  
   return parentOrdinalStacks;
 }
 
@@ -138,8 +235,8 @@ export async function signAndSend(
   console.log(tx.virtualSize())
   console.log(tx.toHex())
 
-  // const txid = await broadcast(tx.toHex());
-  // console.log(`Success! Txid is ${txid}`);
+  const txid = await broadcast(tx.toHex());
+  console.log(`Success! Txid is ${txid}`);
 }
 
 export async function waitUntilUTXO(address: string) {
@@ -180,31 +277,31 @@ export async function broadcast(txHex: string) {
   const response: AxiosResponse<string> = await blockstream.post("/tx", txHex);
   return response.data;
 }
-function tapTweakHash(pubKey: Buffer, h: Buffer | undefined): Buffer {
-  return crypto.taggedHash(
-    "TapTweak",
-    Buffer.concat(h ? [pubKey, h] : [pubKey])
-  );
-}
+// function tapTweakHash(pubKey: Buffer, h: Buffer | undefined): Buffer {
+//   return crypto.taggedHash(
+//     "TapTweak",
+//     Buffer.concat(h ? [pubKey, h] : [pubKey])
+//   );
+// }
 function toXOnly(pubkey: Buffer): Buffer {
   return pubkey.subarray(1, 33);
 }
-function tweakSigner(signer: any, opts: any = {}) {
-  let privateKey = signer.privateKey;
-  if (!privateKey) {
-    throw new Error('Private key is required for tweaking signer!');
-  }
-  if (signer.publicKey[0] === 3) {
-    privateKey = ecc.privateNegate(privateKey);
-  }
-  const tweakedPrivateKey = ecc.privateAdd(privateKey, tapTweakHash(toXOnly(signer.publicKey), opts.tweakHash));
-  if (!tweakedPrivateKey) {
-    throw new Error('Invalid tweaked private key!');
-  }
-  return ECPair.fromPrivateKey(Buffer.from(tweakedPrivateKey), {
-    network: opts.network,
-  });
-}
+// function tweakSigner(signer: any, opts: any = {}) {
+//   let privateKey = signer.privateKey;
+//   if (!privateKey) {
+//     throw new Error('Private key is required for tweaking signer!');
+//   }
+//   if (signer.publicKey[0] === 3) {
+//     privateKey = ecc.privateNegate(privateKey);
+//   }
+//   const tweakedPrivateKey = ecc.privateAdd(privateKey, tapTweakHash(toXOnly(signer.publicKey), opts.tweakHash));
+//   if (!tweakedPrivateKey) {
+//     throw new Error('Invalid tweaked private key!');
+//   }
+//   return ECPair.fromPrivateKey(Buffer.from(tweakedPrivateKey), {
+//     network: opts.network,
+//   });
+// }
 interface IUTXO {
   txid: string;
   vout: number;

@@ -46,13 +46,13 @@ const pointerBuffer2: Buffer = Buffer.from(pointer2.toString(16).padStart(4, '0'
 const pointerBuffer3: Buffer = Buffer.from(pointer3.toString(16).padStart(4, '0'), 'hex').reverse();
 const metaProtocol: Buffer = Buffer.concat([Buffer.from("parcel.bitmap", "utf8")]);
 const contentBufferData1 = Buffer.from('0.364972.bitmap', 'utf8')
-const receiveAddress: string = 'tb1ppx220ln489s5wqu8mqgezm7twwpj0avcvle3vclpdkpqvdg3mwqsvydajn';
+const receiveAddress: string = 'tb1pwc08hjtg4nkaj390u7djryft2z3l4lea4zvepqnpj2adsr4ujzcs3nzcpc';
 const metadata = {
   'type': 'Bitmap',
   'description': 'Bitmap Community Parent Ordinal'
 }
 const metadataBuffer = cbor.encode(metadata);
-const fee = 1200000;
+const fee = 12000;
 
 const splitBuffer = (buffer: Buffer, chunkSize: number) => {
   let chunks = [];
@@ -198,8 +198,8 @@ export async function signAndSend(
   console.log(tx.virtualSize())
   console.log(tx.toHex());
 
-  // const txid = await broadcast(tx.toHex());
-  // console.log(`Success! Txid is ${txid}`);
+  const txid = await broadcast(tx.toHex());
+  console.log(`Success! Txid is ${txid}`);
 }
 
 export async function waitUntilUTXO(address: string) {
