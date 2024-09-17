@@ -17,7 +17,7 @@ import ecc from "@bitcoinerlab/secp256k1";
 import axios, { AxiosResponse } from "axios";
 import networkConfig from "config/network.config";
 import { WIFWallet } from 'utils/WIFWallet'
-import { SeedWallet } from "utils/SeedWallet";
+// import { SeedWallet } from "utils/SeedWallet";
 import cbor from 'cbor'
 //test
 // const network = networks.testnet;
@@ -26,13 +26,13 @@ const network = networks.bitcoin;
 initEccLib(ecc as any);
 const ECPair: ECPairAPI = ECPairFactory(ecc);
 
-const seed: string = process.env.MNEMONIC as string;
-const networkType: string = networkConfig.networkType;
-const wallet = new SeedWallet({ networkType: networkType, seed: seed });
-
-// const privateKey: string = process.env.PRIVATE_KEY as string;
+// const seed: string = process.env.MNEMONIC as string;
 // const networkType: string = networkConfig.networkType;
-// const wallet = new WIFWallet({ networkType: networkType, privateKey: privateKey });
+// const wallet = new SeedWallet({ networkType: networkType, seed: seed });
+
+const privateKey: string = process.env.PRIVATE_KEY as string;
+const networkType: string = networkConfig.networkType;
+const wallet = new WIFWallet({ networkType: networkType, privateKey: privateKey });
 
 const txhash: string = '9cf3f0ded6dfce15739c15350ebdb96b8c42e31a26f934fee3827d06facf9001'
 const txidBuffer = Buffer.from(txhash, 'hex');
