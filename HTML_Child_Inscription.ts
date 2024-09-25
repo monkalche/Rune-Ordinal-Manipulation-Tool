@@ -144,7 +144,7 @@ export function createChildInscriptionTapScript(): Array<Buffer> {
     metaProtocol,
     opcodes.OP_0
   ];
-  
+
   contentBufferArray.forEach((item: Buffer) => {
     childOrdinalStacks.push(item)
   });
