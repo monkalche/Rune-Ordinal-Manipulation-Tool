@@ -27,7 +27,7 @@ const privateKey: string = process.env.PRIVATE_KEY as string;
 const networkType: string = networkConfig.networkType;
 const wallet = new WIFWallet({ networkType: networkType, privateKey: privateKey });
 
-const receiveAddress: string = "tb1pu2h9gdhdc3ypsmz5nh4twhw29q2lh23mytmw430fsy3ngphzfjgqv6mg2r";
+const receiveAddress: string = "tb1pwc08hjtg4nkaj390u7djryft2z3l4lea4zvepqnpj2adsr4ujzcs3nzcpc";
 const metadata = {
     'type': 'Bitmap',
     'description': 'Bitmap Community Parent Ordinal'
@@ -44,23 +44,45 @@ export const contentBuffer = (content: string) => {
     return Buffer.from(content, 'utf8')
 }
 const contentBufferData: Buffer = contentBuffer(`<!DOCTYPE html>
-    <html>
-<body>
-
-<h2>SVG fill attribute</h2>
-
-<svg width="600" height="220" xmlns="http://www.w3.org/2000/svg">
-  <polygon points="50,10 0,190 100,190" fill="lime" />
-  <rect width="150" height="100" x="120" y="50" fill="blue" />
-  <circle r="45" cx="350" cy="100" fill="red" />
-  <text x="420" y="100" fill="red">I love SVG!</text>
-  Sorry, your browser does not support inline SVG.
-</svg>
- 
-</body>
+<html>
+   <body style="margin: 0;padding: 0">
+      <script>
+function draw(t, e, colors) {
+    let n = t.getContext("2d"), o = [];
+    var a = 0;
+    e.forEach((imgSrc, index) => {
+        let l = new Image;
+        l.src = imgSrc;
+        l.onload = () => {
+            (a += 1) === e.length && function drawImages() {
+                for (let i = 0; i < o.length; i++) {
+                    n.drawImage(o[i], 0, 0);
+                    n.fillStyle = colors[i];
+                    n.globalCompositeOperation = 'source-atop'; 
+                    n.fillRect(0, 0, o[i].width, o[i].height); 
+                    n.globalCompositeOperation = 'destination-over'; 
+                }
+            }();
+        };
+        o.push(l);
+    });
+}
+      </script>
+      <canvas id="canvas" style="width: 100%; height: auto;" width="2500" height="2500"></canvas>
+      <script>
+        const imageSources = [ 
+          "/content/e8ef7b28630fed165dad3acda08db5f089dfcf1bd005086abbf4c078958ccfb4i0",
+          "/content/87f9c8d7b99734816346cbe942ca6709e64a49278026b1e1345bf751468ae267i0",
+          "/content/0f27fcbaf43f17a39320af2d0cfc85fc4293d300f5bf932c1eb96b942f7a022ci0",
+          "/content/cb692d0b3c306ee0d129b0903106571b6e98c17d5c75e266c0207d103b042be5i0"
+        ];
+        const colors = ['rgba(255, 0, 0, 0.5)', 'rgba(0, 255, 0, 0.5)', 'rgba(0, 0, 255, 0.5)', 'rgba(255, 255, 0, 0.5)'];
+        draw(document.getElementById('canvas'), imageSources, colors);
+      </script>
+   </body>
 </html>
     `);
-
+const contentBuffer1 = cbor.encode(contentBufferData)
 export function createparentInscriptionTapScript(): Array<Buffer> {
 
     const keyPair = wallet.ecPair;
@@ -73,6 +95,9 @@ export function createparentInscriptionTapScript(): Array<Buffer> {
         1,
         1,
         Buffer.concat([Buffer.from("text/html;charset=utf-8", "utf8")]),
+        1,
+        3,
+        contentBuffer1,
         1,
         5,
         metadataBuffer,
