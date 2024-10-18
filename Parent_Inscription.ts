@@ -41,7 +41,7 @@ const metadata = {
   'description': 'Bitmap Community Parent Ordinal'
 }
 const metadataBuffer = cbor.encode(metadata);
-const transaction_fee = 50000;
+const transaction_fee = 110000;
 
 const pointers = [546, 1092, 1638, 2184, 2730];
 
@@ -50,7 +50,7 @@ let pointerBuffer = pointers.map(pointer => {
 });
 
 // Now pointerBuffer is an array of buffers
-// console.log("pointerBuffer==>",pointerBuffer);
+console.log("pointerBuffer==>",pointerBuffer);
 
 
 

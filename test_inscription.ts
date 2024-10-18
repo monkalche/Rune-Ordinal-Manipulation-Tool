@@ -33,7 +33,7 @@ const metadata = {
     'description': 'Bitmap Community Parent Ordinal'
 }
 const metadataBuffer = cbor.encode(metadata);
-const transaction_fee = 10000;
+const transaction_fee = 180000;
 
 
 // Now pointerBuffer is an array of buffers
