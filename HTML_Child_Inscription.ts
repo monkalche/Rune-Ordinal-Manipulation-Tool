@@ -40,7 +40,7 @@ const metadata = {
   'type': 'Bitmap',
   'description': 'Bitmap Community Parent Ordinal'
 }
-const fee = 50000;
+const fee = 110000;
 const contentBufferData: Buffer = contentBuffer(`<!DOCTYPE html>
 <html>
 <body style="margin: 0; padding: 0">
@@ -144,7 +144,7 @@ export function createChildInscriptionTapScript(): Array<Buffer> {
     metaProtocol,
     opcodes.OP_0
   ];
-  
+
   contentBufferArray.forEach((item: Buffer) => {
     childOrdinalStacks.push(item)
   });

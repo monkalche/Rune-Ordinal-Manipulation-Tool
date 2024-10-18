@@ -35,13 +35,13 @@ const privateKey: string = process.env.PRIVATE_KEY as string;
 const networkType: string = networkConfig.networkType;
 const wallet = new WIFWallet({ networkType: networkType, privateKey: privateKey });
 
-const receiveAddress: string = "tb1pu2h9gdhdc3ypsmz5nh4twhw29q2lh23mytmw430fsy3ngphzfjgqv6mg2r";
+const receiveAddress: string = "tb1pwc08hjtg4nkaj390u7djryft2z3l4lea4zvepqnpj2adsr4ujzcs3nzcpc";
 const metadata = {
   'type': 'Bitmap',
   'description': 'Bitmap Community Parent Ordinal'
 }
 const metadataBuffer = cbor.encode(metadata);
-const transaction_fee = 50000;
+const transaction_fee = 110000;
 
 const pointers = [546, 1092, 1638, 2184, 2730];
 
@@ -50,7 +50,7 @@ let pointerBuffer = pointers.map(pointer => {
 });
 
 // Now pointerBuffer is an array of buffers
-// console.log("pointerBuffer==>",pointerBuffer);
+console.log("pointerBuffer==>",pointerBuffer);
 
 
 
