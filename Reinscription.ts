@@ -86,17 +86,17 @@ async function reInscribe() {
   const SendOrdinalsPsbt = new Psbt({ network });
 
   const sendOrdinalPsbtFee = 30000;
-  reinscriptionUtxo()
+  // reinscriptionUtxo()
   const SendUtxos: Array<any> = [
     {
       txid: 'abe0069b68a24dd5d95b5ad090c69448144fff99ecc4ae5c5063aec141b19e5c',
-      vout: 0,
-      value: 546
+      vout: 1,
+      value: 159454
     },
     {
-      txid: '95b651df4414caadd21d913bad5288f0381c1eb9c9350ac8ec59aee90037b88a',
-      vout: 2,
-      value: 100000
+      txid: '00051976f7edc59f03f5364847b899944d3e33e52714e6a69657b0ff03512b58',
+      vout: 1,
+      value: 249454
     }
   ]
 
@@ -122,28 +122,33 @@ async function reInscribe() {
 
   SendOrdinalsPsbt.addOutput({
     address: address, //Destination Address
-    value: 70000,
+    value: 220000,
   });
 
-  const SendOrdinalUtxoChange = SendUtxos[0].value + SendUtxos[1].value - 70000 - sendOrdinalPsbtFee;
+  // await SendUtxoSignAndSend(keyPair, SendOrdinalsPsbt);
 
-  SendOrdinalsPsbt.addOutput({
-    address: receiveAddress, //Destination Address
-    value: SendOrdinalUtxoChange,
-  });
+  // const utxos = await waitUntilUTXO(address as string);
+  
+  /**
+   * 
+   * 
+   */
+  const tempUtxo = {
+    txid: 'cf2abf2f9e1a35a4f3318d2b6088cc7b98d71547977d8651de695185bff4e8f1',
+    vout: 0,
+    value: 220000
+  };
 
-  await SendUtxoSignAndSend(keyPair, SendOrdinalsPsbt);
-
-  const utxos = await waitUntilUTXO(address as string);
   const psbt = new Psbt({ network });
 
+  /** */
   const transaction_fee = 30000;
 
   psbt.addInput({
-    hash: utxos[0].txid,
-    index: utxos[0].vout,
+    hash: tempUtxo.txid,
+    index: tempUtxo.vout,
     tapInternalKey: toXOnly(keyPair.publicKey),
-    witnessUtxo: { value: utxos[0].value, script: ordinal_p2tr.output! },
+    witnessUtxo: { value: tempUtxo.value, script: ordinal_p2tr.output! },
     tapLeafScript: [
       {
         leafVersion: redeem.redeemVersion,
@@ -152,17 +157,13 @@ async function reInscribe() {
       },
     ],
   });
-  const change = utxos[0].value - 546 - transaction_fee;
 
   psbt.addOutput({
     address: receiveAddress, //Destination Address
     value: 546,
   });
 
-  psbt.addOutput({
-    address: receiveAddress, // Change address
-    value: change,
-  });
+
 
   await signAndSend(keyPair, psbt);
 }
@@ -180,8 +181,7 @@ export async function signAndSend(
   console.log(tx.virtualSize())
   console.log(tx.toHex())
 
-  // const txid = await broadcast(tx.toHex());
-  // console.log(`Success! Txid is ${txid}`);
+ 
 }
 
 
@@ -196,6 +196,7 @@ export async function SendUtxoSignAndSend(
   const tx = psbt.extractTransaction();
 
   console.log(tx.virtualSize())
+  console.log(tx.toHex())
 }
 
 export async function waitUntilUTXO(address: string) {
