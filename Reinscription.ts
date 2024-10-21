@@ -19,22 +19,17 @@ import networkConfig from "config/network.config";
 import { WIFWallet } from 'utils/WIFWallet'
 import { SeedWallet } from "utils/SeedWallet";
 import cbor from 'cbor'
-//test
 const network = networks.testnet;
-// const network = networks.bitcoin;
 
 initEccLib(ecc as any);
 const ECPair: ECPairAPI = ECPairFactory(ecc);
 
-// const seed: string = process.env.MNEMONIC as string;
-// const networkType: string = networkConfig.networkType;
-// const wallet = new SeedWallet({ networkType: networkType, seed: seed });
 
 const privateKey: string = process.env.PRIVATE_KEY as string;
 const networkType: string = networkConfig.networkType;
 const wallet = new WIFWallet({ networkType: networkType, privateKey: privateKey });
 
-const receiveAddress: string = "tb1ppx220ln489s5wqu8mqgezm7twwpj0avcvle3vclpdkpqvdg3mwqsvydajn";
+const receiveAddress: string = "tb1pwc08hjtg4nkaj390u7djryft2z3l4lea4zvepqnpj2adsr4ujzcs3nzcpc";
 const metadata = {
   'type': 'Bitmap',
   'description': 'Bitmap Community Parent Ordinal'

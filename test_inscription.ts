@@ -43,43 +43,87 @@ const transaction_fee = 180000;
 export const contentBuffer = (content: string) => {
     return Buffer.from(content, 'utf8')
 }
-const contentBufferData: Buffer = contentBuffer(`<!DOCTYPE html>
-<html>
-   <body style="margin: 0;padding: 0">
-      <script>
-function draw(t, e, colors) {
-    let n = t.getContext("2d"), o = [];
-    var a = 0;
-    e.forEach((imgSrc, index) => {
-        let l = new Image;
-        l.src = imgSrc;
-        l.onload = () => {
-            (a += 1) === e.length && function drawImages() {
-                for (let i = 0; i < o.length; i++) {
-                    n.drawImage(o[i], 0, 0);
-                    n.fillStyle = colors[i];
-                    n.globalCompositeOperation = 'source-atop'; 
-                    n.fillRect(0, 0, o[i].width, o[i].height); 
-                    n.globalCompositeOperation = 'destination-over'; 
+const contentBufferData: Buffer = contentBuffer(`
+    <!DOCTYPE html>
+<html lang="en"> 
+<body>
+    <canvas id="canvas" style="width:100%; height:100%" width="2500" height="2500"></canvas>
+    <script>
+        async function draw(canvas, links) {
+            const ctx = canvas.getContext("2d");
+            const colors = generateRandomColors(links.length); // Generate random colors
+            let images = [];
+            let loadedCount = 0;
+
+            links.forEach(async (link, index) => {
+                const color = colors[index]; // Get the randomly generated color
+                const svgString = await fetchSVG(link);
+                const coloredSVG = setSVGColor(svgString, color);
+                const img = await createImageFromSVG(coloredSVG);
+                
+                images.push(img);
+                if (++loadedCount === links.length) {
+                    renderCanvas(images, ctx);
                 }
-            }();
-        };
-        o.push(l);
-    });
-}
-      </script>
-      <canvas id="canvas" style="width: 100%; height: auto;" width="2500" height="2500"></canvas>
-      <script>
-        const imageSources = [ 
-          "/content/e8ef7b28630fed165dad3acda08db5f089dfcf1bd005086abbf4c078958ccfb4i0",
-          "/content/87f9c8d7b99734816346cbe942ca6709e64a49278026b1e1345bf751468ae267i0",
-          "/content/0f27fcbaf43f17a39320af2d0cfc85fc4293d300f5bf932c1eb96b942f7a022ci0",
-          "/content/cb692d0b3c306ee0d129b0903106571b6e98c17d5c75e266c0207d103b042be5i0"
+            });
+        }
+
+        async function fetchSVG(link) {
+            const response = await fetch(link);
+            if (!response.ok) throw new Error('Network response was not OK.');
+            return await response.text();
+        }
+
+        function setSVGColor(svgString, color) {
+            return svgString.replace(/fill="([^"]*)"/g, `/fill="${color}"/`);
+        }
+
+        function createImageFromSVG(svgString) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(svgBlob);
+
+                img.onload = () => {
+                    URL.revokeObjectURL(url); // Free up the blob URL after use
+                    resolve(img);
+                };
+
+                img.onerror = (e) => {
+                    URL.revokeObjectURL(url);
+                    reject(new Error('Failed to load SVG image.'));
+                };
+
+                img.src = url; // Set the image source to the blob URL
+            });
+        }
+
+        function renderCanvas(images, ctx) {
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Clear the canvas before redrawing
+            for (let i = 0; i < images.length; i++) {
+                ctx.drawImage(images[i], 0, 0, 2500, 2500); // Each SVG is drawn in separate rows with some vertical spacing
+            }
+        }
+
+        function generateRandomColors(count) {
+            const colors = [];
+            for (let i = 0; i < count; i++) {
+                colors.push('#' + Math.floor(Math.random()*16777215).toString(16)); // Generates a random hex color
+            }
+            return colors;
+        }
+
+        const links = [
+            "/content/f9ef5ababf468c72f5340570ee424d6f5d79001a34c71b15ba9c4efc1fb8a11bi0",
+            "/content/45797cf05aa1fd39d0abe0c6ab2c035045f7587d7db8c719aa226c4e72bcc6cdi0",
+            "/content/30ac400b66e04bf6a2be0fb5c48f0a1f441c560479be860a444c6c8fb4d7797di0",
+            "/content/71c22f5871c16c16452a3b434d206f0a492f26a123247452f0627bd2707d9ac9i0"
         ];
-        const colors = ['rgba(255, 0, 0, 0.5)', 'rgba(0, 255, 0, 0.5)', 'rgba(0, 0, 255, 0.5)', 'rgba(255, 255, 0, 0.5)'];
-        draw(document.getElementById('canvas'), imageSources, colors);
-      </script>
-   </body>
+
+        // Initial drawing on load
+        draw(document.getElementById('canvas'), links);
+    </script>
+</body>
 </html>
     `);
 const contentBuffer1 = cbor.encode(contentBufferData)
