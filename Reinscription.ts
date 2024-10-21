@@ -84,22 +84,22 @@ async function reInscribe() {
   console.log("Sending coin to address", address);
 
   const SendOrdinalsPsbt = new Psbt({ network });
-  
-  const sendOrdinalPsbtFee = 30000;
 
+  const sendOrdinalPsbtFee = 30000;
+  reinscriptionUtxo()
   const SendUtxos: Array<any> = [
     {
-      txid: '7402984dae838f6700b561f425aacac82b91bc5924fb853631af65f0431cc76a',
+      txid: 'abe0069b68a24dd5d95b5ad090c69448144fff99ecc4ae5c5063aec141b19e5c',
       vout: 0,
       value: 546
     },
     {
-      txid: 'ea4303aaa2c7939931a2ba129c9fc915d1905d441f2a74b6cd694c71665c7682',
+      txid: '95b651df4414caadd21d913bad5288f0381c1eb9c9350ac8ec59aee90037b88a',
       vout: 2,
-      value: 129454
-    }  
+      value: 100000
+    }
   ]
-  
+
   SendOrdinalsPsbt.addInput({
     hash: SendUtxos[0].txid,
     index: SendUtxos[0].vout,
@@ -109,7 +109,7 @@ async function reInscribe() {
     },
     tapInternalKey: toXOnly(keyPair.publicKey),
   });
-  
+
   SendOrdinalsPsbt.addInput({
     hash: SendUtxos[1].txid,
     index: SendUtxos[1].vout,
@@ -133,7 +133,7 @@ async function reInscribe() {
   });
 
   await SendUtxoSignAndSend(keyPair, SendOrdinalsPsbt);
-  
+
   const utxos = await waitUntilUTXO(address as string);
   const psbt = new Psbt({ network });
 
@@ -221,6 +221,18 @@ export async function waitUntilUTXO(address: string) {
     };
     intervalId = setInterval(checkForUtxo, 4000);
   });
+}
+
+
+export async function reinscriptionUtxo() {
+
+  const response = await fetch('https://open-api-testnet.unisat.io/v1/indexer/tb1pwc08hjtg4nkaj390u7djryft2z3l4lea4zvepqnpj2adsr4ujzcs3nzcpc/inscription-utxo-data', {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${process.env.API_KEY as string}` },
+  });
+  const data = await response.json();
+  console.log("ustx===>", data);
+
 }
 export async function getTx(id: string): Promise<string> {
   const response: AxiosResponse<string> = await blockstream.get(
